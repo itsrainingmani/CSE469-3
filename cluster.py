@@ -99,5 +99,5 @@ def hcluster():
     dendrogram(Z, truncate_mode='level', p=100, leaf_rotation=90., leaf_font_size=14., show_contracted=True, show_leaf_counts=True)
     plt.show()
 
-#kmeans()
+kmeans()
 hcluster()
