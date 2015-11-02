@@ -82,10 +82,12 @@ def hcluster():
         for row in exreader:
             exData[i] = row
             i += 1
-
+    print exData
     dMatrix = numpy.zeros([6, 6], dtype = float)
-
-
+    for i in range(0,6):
+        for j in range(i,6):
+            dMatrix[i][j] = numpy.linalg.norm(exData[i] - exData[j])
+    print dMatrix.T
 
 #kmeans()
 hcluster()
