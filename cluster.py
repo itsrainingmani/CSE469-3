@@ -1,12 +1,15 @@
-import csv, numpy
+import csv
+import numpy as np
 from sklearn.decomposition import PCA as sklearnPCA
+from scipy.cluster.hierarchy import dendrogram, linkage
+from matplotlib import pyplot as plt
 
 def kmeans():
 
     iris_t = 12
     iris_k = 3
 
-    irisData = numpy.empty([150, 4], dtype = float)
+    irisData = np.empty([150, 4], dtype = float)
     with open('Iris.csv', 'rb') as irisdata:
         irisreader = csv.reader(irisdata, delimiter=',')
         i = 0
@@ -15,7 +18,7 @@ def kmeans():
             i += 1
     #print irisData
 
-    irisCentroid = numpy.empty([iris_k, 4], dtype = float)
+    irisCentroid = np.empty([iris_k, 4], dtype = float)
     with open('Iris_Initial_Centroids.csv', 'rb') as irisdata:
         irisreader = csv.reader(irisdata, delimiter=',')
         i = 0
@@ -29,7 +32,7 @@ def kmeans():
         minCentroid = []
         for arr in irisData:
             for cen in irisCentroid:
-                minCentroid.append(numpy.linalg.norm(arr - cen))
+                minCentroid.append(np.linalg.norm(arr - cen))
             iris_c[minCentroid.index(min(minCentroid))].append(arr)
             minCentroid = []
         temp_iris = iris_c
@@ -42,7 +45,7 @@ def kmeans():
     yeast_t = 7
     yeast_k = 6
 
-    yeastData = numpy.empty([614, 7], dtype = float)
+    yeastData = np.empty([614, 7], dtype = float)
     with open('YeastGene.csv', 'rb') as yeastdata:
         yeastreader = csv.reader(yeastdata, delimiter=',')
         i = 0
@@ -51,7 +54,7 @@ def kmeans():
             i += 1
     #print yeastData
 
-    yeastCentroid = numpy.empty([yeast_k, 7], dtype = float)
+    yeastCentroid = np.empty([yeast_k, 7], dtype = float)
     with open('YeastGene_Initial_Centroids.csv', 'rb') as yeastdata:
         yeastreader = csv.reader(yeastdata, delimiter=',')
         i = 0
@@ -65,7 +68,7 @@ def kmeans():
         minCentroid = []
         for arr in yeastData:
             for cen in yeastCentroid:
-                minCentroid.append(numpy.linalg.norm(arr - cen))
+                minCentroid.append(np.linalg.norm(arr - cen))
             yeast_c[minCentroid.index(min(minCentroid))].append(arr)
             minCentroid = []
 
@@ -75,19 +78,26 @@ def kmeans():
     print yeastCentroid
 
 def hcluster():
-    exData = numpy.empty([6, 5], dtype = float)
-    with open('Example.csv', 'rb') as exdata:
+    exData = np.empty([22, 8], dtype = float)
+    with open('Utilities.csv', 'rb') as exdata:
         exreader = csv.reader(exdata, delimiter=',')
         i = 0
         for row in exreader:
             exData[i] = row
             i += 1
-    print exData
-    dMatrix = numpy.zeros([6, 6], dtype = float)
-    for i in range(0,6):
-        for j in range(i,6):
-            dMatrix[i][j] = numpy.linalg.norm(exData[i] - exData[j])
-    print dMatrix.T
+
+    dMatrix = np.zeros([22, 22], dtype = float)
+    for i in range(0,22):
+        for j in range(i,22):
+            dMatrix[i][j] = np.linalg.norm(exData[i] - exData[j])
+    #print fastcluster.single(dMatrix, preserve_input = True)
+    #print fastcluster.linkage_vector(dMatrix, method = 'single', metric = 'euclidean')
+    Z = linkage(dMatrix, method='single', metric='euclidean')
+    plt.title('Hierarchical Clustering Dendrogram (truncated)')
+    plt.xlabel('sample index')
+    plt.ylabel('distance')
+    dendrogram(Z, truncate_mode='level', p=100, leaf_rotation=90., leaf_font_size=14., show_contracted=True, show_leaf_counts=True)
+    plt.show()
 
 #kmeans()
 hcluster()
