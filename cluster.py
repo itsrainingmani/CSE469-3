@@ -6,42 +6,6 @@ from matplotlib import pyplot as plt
 
 def kmeans():
 
-    iris_t = 12
-    iris_k = 3
-
-    irisData = np.empty([150, 4], dtype = float)
-    with open('Iris.csv', 'rb') as irisdata:
-        irisreader = csv.reader(irisdata, delimiter=',')
-        i = 0
-        for row in irisreader:
-            irisData[i] = row
-            i += 1
-    #print irisData
-
-    irisCentroid = np.empty([iris_k, 4], dtype = float)
-    with open('Iris_Initial_Centroids.csv', 'rb') as irisdata:
-        irisreader = csv.reader(irisdata, delimiter=',')
-        i = 0
-        for row in irisreader:
-            irisCentroid[i] = row
-            i += 1
-    #print irisCentroid
-    temp_iris = [[] for i in range(0,iris_k)]
-    for t in range(0, iris_t):
-        iris_c = [[] for i in range(0,iris_k)]
-        minCentroid = []
-        for arr in irisData:
-            for cen in irisCentroid:
-                minCentroid.append(np.linalg.norm(arr - cen))
-            iris_c[minCentroid.index(min(minCentroid))].append(arr)
-            minCentroid = []
-        temp_iris = iris_c
-
-        for k in range(0,iris_k):
-            irisCentroid[k] = [float(sum(l))/len(l) for l in zip(*iris_c[k])]
-    print "The new Iris Centroid values\n"
-    print irisCentroid
-
     yeast_t = 7
     yeast_k = 6
 
@@ -93,11 +57,17 @@ def hcluster():
     #print fastcluster.single(dMatrix, preserve_input = True)
     #print fastcluster.linkage_vector(dMatrix, method = 'single', metric = 'euclidean')
     Z = linkage(dMatrix, method='single', metric='euclidean')
+    for row in Z:
+        row[0] += 1
+        row[1] += 1
+    print "The order for the hierarchial clustering is"
+    print Z
+    """
     plt.title('Hierarchical Clustering Dendrogram (truncated)')
     plt.xlabel('sample index')
     plt.ylabel('distance')
     dendrogram(Z, truncate_mode='level', p=100, leaf_rotation=90., leaf_font_size=14., show_contracted=True, show_leaf_counts=True)
     plt.show()
-
+    """
 kmeans()
 hcluster()
