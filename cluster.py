@@ -1,10 +1,8 @@
-import csv
-import numpy as np
+import csv, math, numpy as np
+from collections import defaultdict
+from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA as sklearnPCA
 from scipy.cluster.hierarchy import dendrogram, linkage
-from matplotlib import pyplot as plt
-from collections import defaultdict
-import math
 
 def kmeans():
 
@@ -66,26 +64,6 @@ def kmeans():
     plt.title("Kmeans")
     plt.show()
 
-def hclusterCheat():
-    exData = np.empty([6, 5], dtype = float)
-    with open('Example.csv', 'rb') as exdata:
-        exreader = csv.reader(exdata, delimiter=',')
-        i = 0
-        for row in exreader:
-            exData[i] = row
-            i += 1
-
-    dMatrix = np.zeros([6, 6], dtype = float)
-    for i in range(0,6):
-        for j in range(i,6):
-            dMatrix[i][j] = np.linalg.norm(exData[i] - exData[j])
-    Z = linkage(dMatrix, method='single', metric='euclidean')
-    for row in Z:
-        row[0] += 1
-        row[1] += 1
-    print "The order for the hierarchial clustering is"
-    print Z
-
 def hcluster():
     exDict = defaultdict(list)
     cList = []
@@ -138,5 +116,5 @@ def hcluster():
         #print len(cList)
         dMatrix = eMatrix
 
-#kmeans()
+kmeans()
 hcluster()
