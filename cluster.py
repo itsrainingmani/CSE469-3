@@ -1,9 +1,10 @@
 import csv
 import numpy as np
 from sklearn.decomposition import PCA as sklearnPCA
-from sklearn.preprocessing import StandardScaler
 from scipy.cluster.hierarchy import dendrogram, linkage
 from matplotlib import pyplot as plt
+from collections import defaultdict
+import math
 
 def kmeans():
 
@@ -65,33 +66,77 @@ def kmeans():
     plt.title("Kmeans")
     plt.show()
 
-def hcluster():
-    exData = np.empty([22, 8], dtype = float)
-    with open('Utilities.csv', 'rb') as exdata:
+def hclusterCheat():
+    exData = np.empty([6, 5], dtype = float)
+    with open('Example.csv', 'rb') as exdata:
         exreader = csv.reader(exdata, delimiter=',')
         i = 0
         for row in exreader:
             exData[i] = row
             i += 1
 
-    dMatrix = np.zeros([22, 22], dtype = float)
-    for i in range(0,22):
-        for j in range(i,22):
+    dMatrix = np.zeros([6, 6], dtype = float)
+    for i in range(0,6):
+        for j in range(i,6):
             dMatrix[i][j] = np.linalg.norm(exData[i] - exData[j])
-    #print fastcluster.single(dMatrix, preserve_input = True)
-    #print fastcluster.linkage_vector(dMatrix, method = 'single', metric = 'euclidean')
     Z = linkage(dMatrix, method='single', metric='euclidean')
     for row in Z:
         row[0] += 1
         row[1] += 1
     print "The order for the hierarchial clustering is"
     print Z
-    """
-    plt.title('Hierarchical Clustering Dendrogram (truncated)')
-    plt.xlabel('sample index')
-    plt.ylabel('distance')
-    dendrogram(Z, truncate_mode='level', p=100, leaf_rotation=90., leaf_font_size=14., show_contracted=True, show_leaf_counts=True)
-    plt.show()
-    """
-kmeans()
-#hcluster()
+
+def hcluster():
+    exDict = defaultdict(list)
+    cList = []
+    with open('Utilities.csv', 'rb') as exdata:
+        #exreader = csv.reader(exdata, delimiter=',')
+        i = 1
+        for row in exdata:
+            exDict[i] = [float(x) for x in row.split(",")]
+            cList.append(i)
+            i += 1
+
+    dMatrix = np.zeros([22, 22])
+    eMatrix = np.zeros([22, 22])
+    newIndex = len(exDict)
+    while (len(exDict) > 1):
+        #print exDict
+        xPos = 0
+        yPos = 0
+        cList.sort()
+        #print cList
+        minDist = 100.0
+        numCluster = len(exDict)
+        #print (numCluster)
+        #dMatrix = np.zeros([numCluster, numCluster])
+        for i in range(0, len(cList)):
+            for j in range(i, len(cList)):
+                dMatrix[i][j] = math.sqrt(sum((exDict[cList[i]][k] - exDict[cList[j]][k])**2 for k in range(0, 8)))
+                #print "Current distance - " + str(np.linalg.norm(cList[i] - cList[j]))
+                if (dMatrix[i][j] != 0 and dMatrix[i][j] < minDist):
+                    minDist = dMatrix[i][j]
+                    #print "min distance - " + str(minDist)
+                    xPos = i
+                    yPos = j
+        newList = []
+        newIndex += 1
+        newList.append(exDict[cList[xPos]])
+        newList.append(exDict[cList[yPos]])
+        x = cList[xPos]
+        y = cList[yPos]
+        print "Merged " + str(x) + " and " + str(y) + " into " + str(newIndex)
+        newCluster = []
+        del exDict[cList[xPos]]
+        del exDict[cList[yPos]]
+        cList.remove(x)
+        cList.remove(y)
+        for i in range(0, 8):
+            newCluster.append((newList[0][i] + newList[1][i])/2)
+        exDict[newIndex] = newCluster
+        cList.append(newIndex)
+        #print len(cList)
+        dMatrix = eMatrix
+
+#kmeans()
+hcluster()
